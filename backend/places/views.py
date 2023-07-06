@@ -37,6 +37,7 @@ class CreatePlace(APIView):
         title = request.data['title'] # 상호명
         user = User.objects.get(id=1) # 테스트용
         serializer = PlaceSerializer(data=request.data)
+        # print(request.data) # 테스트
         if serializer.is_valid():
             if not Place.objects.filter(title=title).exists(): # 상호명 중복 방지
                 # serializer.save(user=request.user) # 원래 코드
