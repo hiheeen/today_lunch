@@ -35,11 +35,13 @@ class DeletePlace(APIView):
 class CreatePlace(APIView):
     def post(self,request):
         title = request.data['title'] # 상호명
+        user = User.objects.get(id=1) # 테스트용
         serializer = PlaceSerializer(data=request.data)
         if serializer.is_valid():
             if not Place.objects.filter(title=title).exists(): # 같은 상호명 중복 방지
-                serializer.save(user=request.user)
-                return redirect('/api/v1/places')
+                # serializer.save(user=request.user) # 원래 코드
+                serializer.save(user=user) # 테스트용 # 로그인기능 구현 전까지 사용 후 환원 필요
+                return redirect('http://localhost:3000/')
         return Response(serializer.errors)
     
 class SearchPlace(APIView):
