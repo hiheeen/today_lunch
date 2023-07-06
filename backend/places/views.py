@@ -8,7 +8,7 @@ from .serializers import PlaceSerializer
 from django.shortcuts import render,redirect
 # from urllib.parse import quote
 import requests
-
+from rest_framework import status
 
 class TestPage(APIView):
     def get(self,request):
@@ -48,7 +48,7 @@ class SearchPlace(APIView):
         client_secret = os.environ.get('NAVER_CLIENT_SECRET')
         headers = {'X-Naver-Client-Id':client_id,'X-Naver-Client-Secret':client_secret}
         try:
-            kw = request.data['place'] + '신사'    
+            kw = request.data['place'].replace(' ','')  + '신사'    
 
             place_search_url = 'https://openapi.naver.com/v1/search/local.json?query='
             place_url = place_search_url + kw + '$&display=1'
@@ -66,7 +66,7 @@ class SearchPlace(APIView):
         
         except:
             try:
-                kw = request.data['place'] + '논현'
+                kw = request.data['place'].replace(' ','') + '논현'
 
                 place_search_url = 'https://openapi.naver.com/v1/search/local.json?query='
                 place_url = place_search_url + kw + '$&display=1'
