@@ -11,15 +11,17 @@ class TestPage(APIView):
         return render(request,'createuser.html',{'users':users})
 
 class CreateUser(APIView):
-    def post(self,request): # 회원가입 아이디 중복확인 필요
-        user = User.objects.create_user(
-            username = request.data['username'],
-            email = None,
-            password = request.data['password'],
-            userId = request.data['userId']
-            )
-        # return Response('Hi')
-        return redirect('api/v1/users')
+    def post(self,request):
+        if not User.objects.filter(userId=request.data['userId']).exists():
+            user = User.objects.create_user(
+                username = request.data['username'],
+                email = None,
+                password = request.data['password'],
+                userId = request.data['userId']
+                )
+            return redirect('api/v1/users')
+        else:
+            return Response('이미 존재하는 아이디입니다.')
     
 # class UserLogin(APIView): # 로그인
 #     def post(self,request):

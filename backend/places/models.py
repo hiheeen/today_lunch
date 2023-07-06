@@ -2,7 +2,6 @@ from django.db import models
 
 class Place(models.Model):
     title = models.CharField(max_length=150)
-    time = models.CharField(max_length=150)
     category = models.CharField(max_length=150)
     link = models.CharField(max_length=150)
     image = models.URLField(null=True)
