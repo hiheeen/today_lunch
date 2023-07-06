@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" 
+	src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=lwdv9sd7iv"></script>
+</head>
+<body>
+    <div id="map" style="width:100%; height:800px;"></div>
+    <form action="create_place/" method="post">
+        {% csrf_token %}
+        <p>
+            <label for="title">식당이름</label>
+            <input id="title" type="text" name="title"/>
+        </p>
+
+        <p>
+            <label for="time">영업시간</label>
+            <input id="time" type="text" name="time"/>
+        </p>
+
+        <p>
+            <label for="category">음식카테고리</label>
+            <input id="category" type="text" name="category"/>
+        </p>
+
+        <p>
+            <label for="link">자세히보기</label>
+            <input id="link" type="text" name="link"/>
+        </p>  
+
+        <button>등록하기</button>
+    </form>
+
+    <form action="search_place/" method="post">
+        {% csrf_token %}
+        <p>
+            <label for="place">식당검색</label>
+            <input id="place" type="text" name="place"/>
+        </p>
+
+        <button>검색</button>
+    </form>
+
+    <ul>
+    {%for place in places%}
+    <li>
+        <p>{{place.id}}번째 맛집</p>
+        <p>{{place.title}}</p>
+        <p>{{place.time}}</p>
+        <p>{{place.link}}</p>
+        <p>{{place.description}}</p>
+        <p>{{place.user.username}}</p>
+        <form action="{% url 'likes' place.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="좋아요">
+        </form>
+        <form action="{% url 'hates' place.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="싫어요">
+        </form>
+    </li>
+    {%endfor%}
+    </ul>
+    
+    
+    <script>
+
+        var map = new naver.maps.Map('map', {
+            center: new naver.maps.LatLng(37.5112, 127.0981), // 잠실 롯데월드를 중심으로 하는 지도
+            zoom: 15
+        });
+
+        var marker = new naver.maps.Marker({
+            position: new naver.maps.LatLng(37.5112, 127.0981),
+            map: map
+        });
+
+    </script>
+</body>
+</html>
