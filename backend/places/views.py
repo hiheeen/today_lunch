@@ -3,12 +3,11 @@ from rest_framework.response import Response
 import os
 from .models import Place
 from users.models import User
-from users.serializers import UserSerializer
 from .serializers import PlaceSerializer
 from django.shortcuts import render,redirect
-# from urllib.parse import quote
 import requests
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 class TestPage(APIView):
     def get(self,request):
@@ -25,6 +24,7 @@ class AllPlaces(APIView):
 
 class DeletePlace(APIView):    
     def delete(self,request,place_id):
+        permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         if (place.user == request.user) or (request.user.id == 1):
             place.delete()
@@ -34,6 +34,7 @@ class DeletePlace(APIView):
     
 class CreatePlace(APIView):
     def post(self,request):
+        permission_classes = (IsAuthenticated,)
         title = request.data['title'] # 상호명
         user = User.objects.get(id=1) # 테스트용
         serializer = PlaceSerializer(data=request.data)
@@ -90,6 +91,7 @@ class SearchPlace(APIView):
         
 class ModifyPlace(APIView):
     def put(self,request,place_id):
+        permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         
         if (place.user != request.user) or (request.user.id != 1):
@@ -110,6 +112,7 @@ class ModifyPlace(APIView):
 
 class LikePlace(APIView):
     def post(self,request,place_id):
+        permission_classes = (IsAuthenticated,)
         if request.user.is_authenticated:
             place = Place.objects.get(id=place_id)
             if place.hate_user.filter(id=request.user.id).exists():
@@ -122,6 +125,7 @@ class LikePlace(APIView):
                 return Response('like it')
             
     def get(self,request,place_id):
+        permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         likes_num = place.like_user.count()
         return Response(likes_num)
@@ -129,6 +133,7 @@ class LikePlace(APIView):
 
 class HatePlace(APIView):
     def post(self,request,place_id):
+        permission_classes = (IsAuthenticated,)
         if request.user.is_authenticated:
             place = Place.objects.get(id=place_id)
             if place.like_user.filter(id=request.user.id).exists():
@@ -141,6 +146,7 @@ class HatePlace(APIView):
                 return Response('hate it')
             
     def get(self,request,place_id):
+        permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         likes_num = place.hate_user.count()
         return Response(likes_num)           

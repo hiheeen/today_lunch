@@ -170,6 +170,23 @@ django = ">=3.0"
 pytz = "*"
 
 [[package]]
+<<<<<<< HEAD
+=======
+name = "djangorestframework-jwt"
+version = "1.11.0"
+description = "JSON Web Token based authentication for Django REST framework"
+optional = false
+python-versions = "*"
+files = [
+    {file = "djangorestframework-jwt-1.11.0.tar.gz", hash = "sha256:5efe33032f3a4518a300dc51a51c92145ad95fb6f4b272e5aa24701db67936a7"},
+    {file = "djangorestframework_jwt-1.11.0-py2.py3-none-any.whl", hash = "sha256:ab15dfbbe535eede8e2e53adaf52ef0cf018ee27dbfad10cbc4cbec2ab63d38c"},
+]
+
+[package.dependencies]
+PyJWT = ">=1.5.2,<2.0.0"
+
+[[package]]
+>>>>>>> 3144d64bc328f49465f4bf73d5ace737ab09ea8c
 name = "djangorestframework-simplejwt"
 version = "5.2.2"
 description = "A minimal JSON Web Token authentication plugin for Django REST Framework"
@@ -206,6 +223,7 @@ files = [
 
 [[package]]
 name = "pyjwt"
+<<<<<<< HEAD
 version = "2.7.0"
 description = "JSON Web Token implementation in Python"
 optional = false
@@ -220,6 +238,21 @@ crypto = ["cryptography (>=3.4.0)"]
 dev = ["coverage[toml] (==5.0.4)", "cryptography (>=3.4.0)", "pre-commit", "pytest (>=6.0.0,<7.0.0)", "sphinx (>=4.5.0,<5.0.0)", "sphinx-rtd-theme", "zope.interface"]
 docs = ["sphinx (>=4.5.0,<5.0.0)", "sphinx-rtd-theme", "zope.interface"]
 tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
+=======
+version = "1.7.1"
+description = "JSON Web Token implementation in Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
+    {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
+]
+
+[package.extras]
+crypto = ["cryptography (>=1.4)"]
+flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
+test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
+>>>>>>> 3144d64bc328f49465f4bf73d5ace737ab09ea8c
 
 [[package]]
 name = "python-dotenv"
@@ -314,4 +347,8 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
+<<<<<<< HEAD
 content-hash = "60203d986fc7f7418a9265d2f96e8c821974cdeb0a65dd2eeaf80eff6fa37683"
+=======
+content-hash = "7c02de65e00712d2ca0a29bfd97eb4a632006338b5fd1be4002cbf78885aca0c"
+>>>>>>> 3144d64bc328f49465f4bf73d5ace737ab09ea8c
