@@ -19,7 +19,7 @@ class CreateUser(APIView):
                 password = request.data['password'],
                 userId = request.data['userId']
                 )
-            return redirect('api/v1/users')
+            return Response('good')
         else:
             return Response('이미 존재하는 아이디입니다.')
     

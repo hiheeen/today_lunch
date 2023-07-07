@@ -31,18 +31,18 @@ class DeletePlace(APIView):
             return Response('delete completes')
         else:
             raise PermissionError
-
+    
 class CreatePlace(APIView):
     def post(self,request):
         title = request.data['title'] # 상호명
         user = User.objects.get(id=1) # 테스트용
         serializer = PlaceSerializer(data=request.data)
-        # print(request.data) # 테스트
+        print(request.data) # 테스트
         if serializer.is_valid():
             if not Place.objects.filter(title=title).exists(): # 상호명 중복 방지
                 # serializer.save(user=request.user) # 원래 코드
                 serializer.save(user=user) # 테스트용 # 로그인기능 구현 전까지 사용 후 환원 필요
-                return redirect('http://localhost:3000/')
+                return Response('hh')
         return Response(serializer.errors)
     
 class SearchPlace(APIView):
