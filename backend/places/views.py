@@ -34,7 +34,7 @@ class DeletePlace(APIView):
     
 class CreatePlace(APIView):
     def post(self,request):
-        permission_classes = (IsAuthenticated,)
+        # permission_classes = (IsAuthenticated,)
         title = request.data['title'] # 상호명
         user = User.objects.get(id=1) # 테스트용
         serializer = PlaceSerializer(data=request.data)
@@ -48,6 +48,7 @@ class CreatePlace(APIView):
     
 class SearchPlace(APIView):
     def post(sel,request):
+        print(request.data['place'])
         client_id = os.environ.get('NAVER_CLIENT_ID')
         client_secret = os.environ.get('NAVER_CLIENT_SECRET')
         headers = {'X-Naver-Client-Id':client_id,'X-Naver-Client-Secret':client_secret}

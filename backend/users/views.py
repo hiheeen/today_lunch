@@ -25,8 +25,9 @@ class CreateUser(APIView):
             return Response('이미 존재하는 아이디입니다.')
         
 class Logout(APIView):
-     permission_classes = (IsAuthenticated,)
      def post(self, request):
+          print(request.data)
+          permission_classes = (IsAuthenticated,)
           try:
                refresh_token = request.data["refresh_token"]
                token = RefreshToken(refresh_token)
