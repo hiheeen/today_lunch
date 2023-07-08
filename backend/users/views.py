@@ -6,12 +6,6 @@ from .models import User
 from rest_framework.permissions import IsAuthenticated 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-
-class TestPage(APIView):
-    def get(self,request):
-        users = User.objects.all()
-        return render(request,'createuser.html',{'users':users})
-
 class CreateUser(APIView):
     def post(self,request):
         if not User.objects.filter(userId=request.data['userId']).exists():
@@ -20,9 +14,9 @@ class CreateUser(APIView):
                 password = request.data['password'],
                 userId = request.data['userId']
                 )
-            return Response('good')
+            return Response(status=status.HTTP_201_CREATED)
         else:
-            return Response('이미 존재하는 아이디입니다.')
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         
 class Logout(APIView):
      permission_classes = (IsAuthenticated,)
@@ -34,6 +28,3 @@ class Logout(APIView):
                return Response(status=status.HTTP_205_RESET_CONTENT)
           except Exception as e:
                return Response(status=status.HTTP_400_BAD_REQUEST)
-    
-# class UserLogin(APIView): # 로그인
-#     def post(self,request):
