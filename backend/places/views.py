@@ -9,17 +9,11 @@ import requests
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-class TestPage(APIView):
-    def get(self,request):
-        places = Place.objects.all()
-        users = User.objects.all()
-        return render(request,'testpage.html',{'places':places,'users':users})
-
 class AllPlaces(APIView):
     def get(self,request):
         places = Place.objects.all().order_by('title')
         serializer = PlaceSerializer(places,many=True)
-        return Response(serializer.data)
+        return Response(serializer.data,status = status.HTTP_202_ACCEPTED)
 
 
 class DeletePlace(APIView):    
@@ -28,7 +22,7 @@ class DeletePlace(APIView):
         place = Place.objects.get(id=place_id)
         if (place.user == request.user) or (request.user.id == 1):
             place.delete()
-            return Response('delete completes')
+            return Response(status = status.HTTP_200_OK)
         else:
             raise PermissionError
 
@@ -36,15 +30,12 @@ class CreatePlace(APIView):
     def post(self,request):
         permission_classes = (IsAuthenticated,)
         title = request.data['title'] # 상호명
-        user = User.objects.get(id=1) # 테스트용
         serializer = PlaceSerializer(data=request.data)
-        # print(request.data) # 테스트
         if serializer.is_valid():
             if not Place.objects.filter(title=title).exists(): # 상호명 중복 방지
-                # serializer.save(user=request.user) # 원래 코드
-                serializer.save(user=user) # 테스트용 # 로그인기능 구현 전까지 사용 후 환원 필요
+                serializer.save(user=request.user)
                 return Response(status = status.HTTP_201_CREATED)
-        return Response(serializer.errors)
+        return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
     
 class SearchPlace(APIView):
     def post(sel,request):
@@ -66,7 +57,7 @@ class SearchPlace(APIView):
             image_url = place_image_url + kw + '$&display=1'
             image_result = requests.get(image_url,headers = headers).json() 
             
-            return Response({'place':place_result,"image":image_result})
+            return Response({'place':place_result,"image":image_result},status = status.HTTP_200_OK)
         
         except:
             try:
@@ -84,9 +75,9 @@ class SearchPlace(APIView):
                 image_url = place_image_url + kw + '$&display=1'
                 image_result = requests.get(image_url,headers = headers).json() 
                 
-                return Response({'place':place_result,"image":image_result})
+                return Response({'place':place_result,"image":image_result},status = status.HTTP_200_OK)
             except:
-                return Response('검색결과가 없습니다.')
+                return Response(status = status.HTTP_204_NO_CONTENT)
          
         
 class ModifyPlace(APIView):
@@ -106,9 +97,9 @@ class ModifyPlace(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response('Modify Complete!')
+            return Response(status = status.HTTP_202_ACCEPTED)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class LikePlace(APIView):
     def post(self,request,place_id):
@@ -116,19 +107,19 @@ class LikePlace(APIView):
         if request.user.is_authenticated:
             place = Place.objects.get(id=place_id)
             if place.hate_user.filter(id=request.user.id).exists():
-                return Response('dont do that!')
+                return Response(status = status.HTTP_400_BAD_REQUEST)
             elif place.like_user.filter(id=request.user.id).exists():
                 place.like_user.remove(request.user)
-                return Response('i dont like it')
+                return Response(status = status.HTTP_202_ACCEPTED)
             else:
                 place.like_user.add(request.user)
-                return Response('like it')
+                return Response(status = status.HTTP_202_ACCEPTED)
             
     def get(self,request,place_id):
         permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         likes_num = place.like_user.count()
-        return Response(likes_num)
+        return Response(likes_num,status = status.HTTP_200_OK)
 
 
 class HatePlace(APIView):
@@ -137,16 +128,16 @@ class HatePlace(APIView):
         if request.user.is_authenticated:
             place = Place.objects.get(id=place_id)
             if place.like_user.filter(id=request.user.id).exists():
-                return Response('dont do that!')
+                return Response(status = status.HTTP_400_BAD_REQUEST)
             elif place.hate_user.filter(id=request.user.id).exists():
                 place.hate_user.remove(request.user)
-                return Response('i dont hate it')
+                return Response(status = status.HTTP_202_ACCEPTED)
             else:
                 place.hate_user.add(request.user)
-                return Response('hate it')
+                return Response(status = status.HTTP_202_ACCEPTED)
             
     def get(self,request,place_id):
         permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         likes_num = place.hate_user.count()
-        return Response(likes_num)           
+        return Response(likes_num,status = status.HTTP_200_OK)           
