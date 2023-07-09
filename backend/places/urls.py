@@ -9,4 +9,6 @@ urlpatterns = [
     path('modify_place/<int:place_id>/',views.ModifyPlace.as_view()),
     path('like_place/<int:place_id>/',views.LikePlace.as_view()),
     path('hate_place/<int:place_id>/',views.HatePlace.as_view()),
+    path('like_place/',views.LikeNumber.as_view()),
+    path('hate_place/',views.HateNumber.as_view()),
 ]

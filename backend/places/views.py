@@ -13,8 +13,7 @@ class AllPlaces(APIView):
     def get(self,request):
         places = Place.objects.all().order_by('title')
         serializer = PlaceSerializer(places,many=True)
-        return Response(serializer.data,status = status.HTTP_202_ACCEPTED)
-
+        return Response(serializer.data,status = status.HTTP_202_ACCEPTED) 
 
 class DeletePlace(APIView):    
     def delete(self,request,place_id):
@@ -85,41 +84,52 @@ class ModifyPlace(APIView):
         permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         
-        if (place.user != request.user) or (request.user.id != 1):
-            raise PermissionError
+        if (place.user == request.user) or (request.user.id == 1):
         
-        serializer = PlaceSerializer(
-            place,
-            data = request.data,
-            partial = True,
-            context = {'request':request}
-        )
+            serializer = PlaceSerializer(
+                place,
+                data = request.data,
+                partial = True,
+                context = {'request':request}
+            )
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status = status.HTTP_202_ACCEPTED)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status = status.HTTP_202_ACCEPTED)
+            else:
+                return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+            raise PermissionError
 
 class LikePlace(APIView):
     def post(self,request,place_id):
         permission_classes = (IsAuthenticated,)
-        if request.user.is_authenticated:
-            place = Place.objects.get(id=place_id)
-            if place.hate_user.filter(id=request.user.id).exists():
-                return Response(status = status.HTTP_400_BAD_REQUEST)
-            elif place.like_user.filter(id=request.user.id).exists():
-                place.like_user.remove(request.user)
-                return Response(status = status.HTTP_202_ACCEPTED)
-            else:
-                place.like_user.add(request.user)
-                return Response(status = status.HTTP_202_ACCEPTED)
-            
-    def get(self,request,place_id):
         place = Place.objects.get(id=place_id)
-        likes_num = place.like_user.count()
-        return Response(likes_num,status = status.HTTP_200_OK)
+        if place.hate_user.filter(id=request.user.id).exists():
+            return Response(status = status.HTTP_400_BAD_REQUEST)
+        elif place.like_user.filter(id=request.user.id).exists():
+            place.like_user.remove(request.user)
+            return Response(status = status.HTTP_202_ACCEPTED)
+        else:
+            place.like_user.add(request.user)
+            return Response(status = status.HTTP_202_ACCEPTED)
+            
+    # def get(self,request,place_id):
+    #     place = Place.objects.get(id=place_id)
+    #     likes_num = place.like_user.count()
+    #     return Response(likes_num,status = status.HTTP_200_OK)
 
+class LikeNumber(APIView):
+    def get(self,request):
+        places = Place.objects.all()
+
+        likes_num = []
+        
+        for place in places:
+            likes_count = place.count_likes()
+            likes_num.append({'id': place.id, 'likes' : likes_count})
+
+        return Response(likes_num , status = status.HTTP_200_OK)
 
 class HatePlace(APIView):
     def post(self,request,place_id):
@@ -135,7 +145,19 @@ class HatePlace(APIView):
                 place.hate_user.add(request.user)
                 return Response(status = status.HTTP_202_ACCEPTED)
             
-    def get(self,request,place_id):
-        place = Place.objects.get(id=place_id)
-        likes_num = place.hate_user.count()
-        return Response(likes_num,status = status.HTTP_200_OK)           
+    # def get(self,request,place_id):
+    #     place = Place.objects.get(id=place_id)
+    #     likes_num = place.hate_user.count()
+    #     return Response(likes_num,status = status.HTTP_200_OK)    
+    
+class HateNumber(APIView):
+    def get(self,request):
+        places = Place.objects.all()
+
+        hates_num = []
+        
+        for place in places:
+            hates_count = place.count_hates()
+            hates_num.append({'id': place.id, 'hates' : hates_count})
+
+        return Response(hates_num , status = status.HTTP_200_OK)       
