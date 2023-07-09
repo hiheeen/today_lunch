@@ -116,7 +116,6 @@ class LikePlace(APIView):
                 return Response(status = status.HTTP_202_ACCEPTED)
             
     def get(self,request,place_id):
-        permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         likes_num = place.like_user.count()
         return Response(likes_num,status = status.HTTP_200_OK)
@@ -137,7 +136,6 @@ class HatePlace(APIView):
                 return Response(status = status.HTTP_202_ACCEPTED)
             
     def get(self,request,place_id):
-        permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
         likes_num = place.hate_user.count()
         return Response(likes_num,status = status.HTTP_200_OK)           
