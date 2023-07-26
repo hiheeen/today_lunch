@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 import os
 from .models import Place
-from users.models import User
 from .serializers import PlaceSerializer
 from django.shortcuts import render,redirect
 import requests
@@ -38,52 +37,84 @@ class CreatePlace(APIView):
         return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
     
 class SearchPlace(APIView):
-    def post(sel,request):
-        client_id = os.environ.get('NAVER_CLIENT_ID')
-        client_secret = os.environ.get('NAVER_CLIENT_SECRET')
-        headers = {'X-Naver-Client-Id':client_id,'X-Naver-Client-Secret':client_secret}
+    def post(self,request):
         try:
             kw = request.data['place'].replace(' ','')  + '신사'    
 
-            place_search_url = 'https://openapi.naver.com/v1/search/local.json?query='
-            place_url = place_search_url + kw + '$&display=1'
-            place_result = requests.get(place_url,headers = headers).json()
-
-            place_result_none_b = place_result['items'][0]['title'].replace('<b>', '').replace('</b>', '')
+            place_search_url = os.environ.get('NAVER_SEARCH_URL')
+            place_url = place_search_url + kw 
+            search_result = requests.get(place_url).json()
             
-            place_result['items'][0]['title'] = place_result_none_b
+            category = ">".join(search_result['result']['place']['list'][0]['category'])
 
-            place_image_url = 'https://openapi.naver.com/v1/search/image?query='
-            image_url = place_image_url + kw + '$&display=1'
-            image_result = requests.get(image_url,headers = headers).json() 
-            
-            return Response({'place':place_result,"image":image_result},status = status.HTTP_200_OK)
+            result = {
+                "place" : {
+                    "items" : [{
+                        "title" : search_result['result']['place']['list'][0]['name'],
+                        "category" : category,
+                        "mapx" : search_result['result']['place']['list'][0]['x'],
+                        "mapy" : search_result['result']['place']['list'][0]['y']
+                    }]
+                },
+                "image" : {
+                    "items" : [{
+                        "link" : search_result['result']['place']['list'][0]['thumUrl']
+                    }]
+                }
+            }
+
+            return Response(result,status = status.HTTP_200_OK)
         
         except:
-            try:
-                kw = request.data['place'].replace(' ','') + '논현'
+            return Response(status = status.HTTP_204_NO_CONTENT)
+            
+# class SearchPlace(APIView):
+#     def post(sel,request):
+#         client_id = os.environ.get('NAVER_CLIENT_ID')
+#         client_secret = os.environ.get('NAVER_CLIENT_SECRET')
+#         headers = {'X-Naver-Client-Id':client_id,'X-Naver-Client-Secret':client_secret}
+#         try:
+#             kw = request.data['place'].replace(' ','')  + '신사'    
 
-                place_search_url = 'https://openapi.naver.com/v1/search/local.json?query='
-                place_url = place_search_url + kw + '$&display=1'
-                place_result = requests.get(place_url,headers = headers).json()
+#             place_search_url = 'https://openapi.naver.com/v1/search/local.json?query='
+#             place_url = place_search_url + kw + '$&display=1'
+#             place_result = requests.get(place_url,headers = headers).json()
 
-                place_result_none_b = place_result['items'][0]['title'].replace('<b>', '').replace('</b>', '')
+#             place_result_none_b = place_result['items'][0]['title'].replace('<b>', '').replace('</b>', '')
+            
+#             place_result['items'][0]['title'] = place_result_none_b
+
+#             place_image_url = 'https://openapi.naver.com/v1/search/image?query='
+#             image_url = place_image_url + kw + '$&display=1'
+#             image_result = requests.get(image_url,headers = headers).json() 
+            
+#             return Response({'place':place_result,"image":image_result},status = status.HTTP_200_OK)
+        
+#         except:
+#             try:
+#                 kw = request.data['place'].replace(' ','') + '논현'
+
+#                 place_search_url = 'https://openapi.naver.com/v1/search/local.json?query='
+#                 place_url = place_search_url + kw + '$&display=1'
+#                 place_result = requests.get(place_url,headers = headers).json()
+
+#                 place_result_none_b = place_result['items'][0]['title'].replace('<b>', '').replace('</b>', '')
                 
-                place_result['items'][0]['title'] = place_result_none_b
+#                 place_result['items'][0]['title'] = place_result_none_b
 
-                place_image_url = 'https://openapi.naver.com/v1/search/image?query='
-                image_url = place_image_url + kw + '$&display=1'
-                image_result = requests.get(image_url,headers = headers).json() 
+#                 place_image_url = 'https://openapi.naver.com/v1/search/image?query='
+#                 image_url = place_image_url + kw + '$&display=1'
+#                 image_result = requests.get(image_url,headers = headers).json() 
                 
-                return Response({'place':place_result,"image":image_result},status = status.HTTP_200_OK)
-            except:
-                return Response(status = status.HTTP_204_NO_CONTENT)
+#                 return Response({'place':place_result,"image":image_result},status = status.HTTP_200_OK)
+#             except:
+#                 return Response(status = status.HTTP_204_NO_CONTENT)
          
 class ModifyPlace(APIView):
     def put(self,request,place_id):
-        permission_classes = (IsAuthenticated,)
+        # permission_classes = (IsAuthenticated,)
         place = Place.objects.get(id=place_id)
-        
+        print(request.user)
         if (place.user == request.user) or (request.user.id == 1):
         
             serializer = PlaceSerializer(
