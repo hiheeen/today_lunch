@@ -9,3 +9,9 @@ class Place(models.Model):
     user = models.ForeignKey('users.User',on_delete=models.CASCADE)
     like_user = models.ManyToManyField('users.User',related_name='like_user',blank=True)
     hate_user = models.ManyToManyField('users.User',related_name='hate_user',blank=True)
+
+    def count_likes(self):
+        return self.like_user.count()
+    
+    def count_hates(self):
+        return self.hate_user.count()

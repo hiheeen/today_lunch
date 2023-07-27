@@ -1,22 +1,19 @@
 [tool.poetry]
-name = "today-lunch"
+name = "backend"
 version = "0.1.0"
 description = ""
 authors = ["byungyong <quddyddlrk@naver.com>"]
 readme = "README.md"
-packages = [{include = "today_lunch"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 django = "^4.2.3"
 djangorestframework = "^3.14.0"
 requests = "^2.31.0"
-django-cors-headers = "^4.1.0"
-python-dotenv = "^1.0.0"
+django-cors-headers = "^4.2.0"
 django-dotenv = "^1.4.2"
-djangorestframework-jwt = "^1.11.0"
 djangorestframework-simplejwt = "^5.2.2"
-
+python-dotenv = "^1.0.0"
 
 
 [build-system]
