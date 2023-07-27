@@ -130,11 +130,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ORIGIN_WHITELIST = ('http://127.0.0.1:3000', 'http://localhost:3000')
+CORS_ORIGIN_WHITELIST = ('http://127.0.0.1:3000', 'http://localhost:3000','http://localhost:3001','http://localhost:3002','http://127.0.0.1:3003', 'http://localhost:3003')
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000'
+    'http://localhost:3000','http://localhost:3001'
 ]
 
 REST_FRAMEWORK = {
@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=5), 
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(seconds=20), 
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1), 
     'ROTATE_REFRESH_TOKENS': True, 
     'BLACKLIST_AFTER_ROTATION': True, 
